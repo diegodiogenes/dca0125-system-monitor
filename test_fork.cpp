@@ -13,13 +13,26 @@ Engenharia de Computação - 2019.2
 #include <iostream>
 #include <sys/wait.h>
 
+void interface(int option, std::string filter = NULL){
+  switch (option)
+  {
+  case 1:
+    system( (" ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | grep  '"+filter+"'").c_str() );
+    break;
+  
+  default:
+    system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | head -n 30");
+    break;
+  }
+}
+
 int main() {
   system("clear");
   std::cout << "\033[37;41m\t\t Bem-vindo ao Gerenciador de Processos Interativo (GPI) \t\033[0m \n ";
   int option = 0;
 
   do{
-    system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm --sort=-pcpu | head -n 20");
+    interface(option, std::string());
     std::cout << "1. " << "\033[30;46mfiltrar processo\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
     << "\033[30;46mContinuar Processo\033[0m" << " 4. " << "\033[30;46mMudar prioridade\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m \n";
     std::cin >> option;
@@ -31,23 +44,26 @@ int main() {
     }
   }while(1);
 
-  printf("fora");
+  // printf("fora");
 
-  // while (1) {
-  //   printf("> ");
-  //   std::cin >> option;
   //   int pid = fork();
   //   if (pid == 0) {
+  //     while (1)
+  //     {
   //     system("clear");
-  //     system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm --sort=-pcpu | head -n 20");
+  //     system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm --sort=-pcpu | head -n 20&");
+  //     sleep(1);
+  //     }
   //   } else if (pid > 0) {
   //       int status;
   //       waitpid(pid, &status, 0);
   //       printf("Child exited with %d\n", WEXITSTATUS(status));
-  //   } else {
-  //       printf("ERROR!\n");
-  //       break;
   //   }
+
+  // while (1) {
+  //   printf("> \n");
+  //   std::cin >> option;
+  //   printf("%d \n",option);
   // }
 
   return 0;
