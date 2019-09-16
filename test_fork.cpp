@@ -62,17 +62,23 @@ int main() {
   system("clear");
   std::cout << "\033[37;41m\t\t Bem-vindo ao Gerenciador de Processos Interativo (GPI) \t\033[0m \n ";
   int option = 0;
+  std::string filter;
 
   do{
 
-    interface(option, std::string());
+    interface(option, filter);
     std::cout << "1. " << "\033[30;46mfiltrar processo\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
     << "\033[30;46mContinuar Processo\033[0m" << " 4. " << "\033[30;46mMudar prioridade\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
     << " 6. " << "\033[30;46mKill\033[0m \n";
     std::cin >> option;
 
-    if(option == 5){
-
+    if(option == 1){
+      interface(0, filter);
+      std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
+    << "\033[30;46m\033[0m";
+      std::cin >> filter;
+      system("clear");
+    }else if(option == 5){
       system("clear");
 
       //KILL
