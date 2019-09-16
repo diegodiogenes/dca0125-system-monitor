@@ -15,6 +15,23 @@ Engenharia de Computação - 2019.2
 #include <signal.h>   //kill
 #include <sys/time.h>     // getpriority(int which, int who)  setpriority(int which, int who, int prio);
 #include <sys/resource.h>
+#define _GNU_SOURCE
+#include <sched.h>
+
+std::string name_key( int c ) {
+  // This function takes a keycode and turns it into a string.
+  // I'm pretty sure there is a curses function to do this,
+  // but I'm not going to look it up right now... (sorry)
+  std::string result;
+  if (c < 32) {  // control keys
+    result = "^";
+    result += (char)c +'A' -1;
+    }
+  else if (c == 127) result = "^?";
+  else if (c > 127) result = "FN";  // any function key (arrows, F1, Cut, etc)
+  else result = c;  // normal alphanumeric key
+  return result;
+}
 
 void interface(int option, std::string filter = NULL){
   switch (option)
@@ -61,6 +78,7 @@ int main() {
   int pid_vitima;
   int option_kill = 0;
   int value = 0;
+  int cpuValue = 0;
 
   system("clear");
   std::cout << "\033[37;41m\t\t Bem-vindo ao Gerenciador de Processos Interativo (GPI) \t\033[0m \n ";
@@ -70,8 +88,8 @@ int main() {
   do{
     interface(option, filter);
     std::cout << "1. " << "\033[30;46mProcurar\033[0m" << " 2. " << "\033[30;46mNice -\033[0m" << " 3. " 
-    << "\033[30;46mNice +\033[0m" << " 4. " << "\033[30;46m?\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
-    << " 6. " << "\033[30;46mKill\033[0m" << " 7. " << "\033[30;46mAlterar CPU\033[0m \n";
+    << "\033[30;46mNice +\033[0m" << " 4. " << "\033[30;46mChange CPU\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
+    << " 6. " << "\033[30;46mKill\033[0m \n";
     std::cin >> option;
 
     switch(option){
@@ -106,6 +124,18 @@ int main() {
 			setpriority(PRIO_PROCESS, pid_vitima, value); 
 			system("clear");
         case 4:
+            cpu_set_t  mask;
+            std::cout << "\033[30;46mPID do processo: \033[0m";
+            std::cin >> value;
+            std::cout << "\033[30;46mCPU para alocar: \033[0m";
+            std::cin >> cpuValue;
+
+            CPU_ZERO(&mask);
+            CPU_SET(cpuValue, &mask);
+            sched_setaffinity(value, sizeof(mask), &mask);
+            std::cout << "\033[30;46mProcesso de PID " << value <<" alterado para " << cpuValue << "\033[0m \n";
+            sleep(1);
+            system("clear");
             break;
         case 5:
             system("clear");
@@ -116,7 +146,7 @@ int main() {
             std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
             std::cin >> option_kill;
 
-            printf( "Digite o PID do processo que a mensagem deve ser enviada: ");
+            printf("Digite o PID do processo que a mensagem deve ser enviada: ");
             scanf( "%d", &pid_vitima);
 
             //chamar função
