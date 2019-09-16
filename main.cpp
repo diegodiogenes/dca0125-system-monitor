@@ -14,12 +14,15 @@ Engenharia de Computação - 2019.2
 #include <sys/wait.h>
 #include <signal.h>   //kill
 
+#include <sys/time.h>     // getpriority(int which, int who)  setpriority(int which, int who, int prio);
+#include <sys/resource.h>
+
+
 void interface(int option, std::string filter = NULL){
   switch (option)
   {
   case 1:
-    system("clear");
-    system( (" ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER | head -1; ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | grep  '"+filter+"' --color=auto").c_str() );
+    system( (" ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | grep  '"+filter+"'").c_str() );
     break;
   
   default:
@@ -49,7 +52,7 @@ void funcKill(int pid_vitima, int option_kill){
 /*
 TO-DO
 
-1- [X] FILTRO
+1- [ ] FILTRO
 2- [X] Pause/Continue/Mata processo 
 3- [ ] Muda Prioridade do processo
 4- [ ] Escolhe a CPU do processo
@@ -59,6 +62,8 @@ int main() {
 
   int pid_vitima;
   int option_kill = 0;
+  int value = 0;
+
 
   system("clear");
   std::cout << "\033[37;41m\t\t Bem-vindo ao Gerenciador de Processos Interativo (GPI) \t\033[0m \n ";
@@ -66,49 +71,84 @@ int main() {
   std::string filter;
 
   do{
+
     interface(option, filter);
-    std::cout << "1. " << "\033[30;46mProcurar\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
+    std::cout << "1. " << "\033[30;46mfiltrar processo\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
     << "\033[30;46mContinuar Processo\033[0m" << " 4. " << "\033[30;46mMudar prioridade\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
-    << " 6. " << "\033[30;46mKill\033[0m \n" << " 7. " << "\033[30;46mAlterar CPU\033[0m \n";
+    << " 6. " << "\033[30;46mKill\033[0m"<< " 7. " << "\033[30;46mNice -\033[0m"<< " 8. " << "\033[30;46mNice +\033[0m \n";
     std::cin >> option;
 
-    switch(option){
-        case 1:
-            system("clear");  
-            interface(0, filter);
-            std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
-            << "\033[30;46m\033[0m";
-            std::cin >> filter;
-            if(filter.compare("2") == 0)
-                option = 0;
-            system("clear");
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            system("clear");
-            break;
-        case 6:
-            //TO-DO PARA AS DEMAIS MENSAGENS
-            std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";
-            std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
-            std::cin >> option_kill;
+    if(option == 1){
+      interface(0, filter);
+      std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
+    << "\033[30;46m\033[0m";
+      std::cin >> filter;
+      system("clear");
+    }else if(option == 5){
+      system("clear");
 
-            printf( "Digite o PID do processo que a mensagem deve ser enviada: ");
-            scanf( "%d", &pid_vitima);
+      //KILL
+    } else if(option == 6){
 
-            //chamar função
-            funcKill(pid_vitima, option_kill);     
-            break;
-        default:
-            break;                            
+      //TO-DO PARA AS DEMAIS MENSAGENS
+      std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";
+      std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
+      std::cin >> option_kill;
+
+      printf( "Digite o PID do processo que a mensagem deve ser enviada: ");
+      scanf( "%d", &pid_vitima);
+
+      //chamar função
+      funcKill(pid_vitima, option_kill);     
+
+    } else if(option == 7){
+    	//DECREMENTA PRIORIDADE   	
+		printf( "Digite o PID do processo para decrementar(ROOT): ");
+		scanf( "%d", &pid_vitima);
+
+		std::cout << "Valor: "; 
+      	std::cin >> value;
+
+		setpriority(PRIO_PROCESS, pid_vitima, (-1)*value); 
+		system("clear");
+
+    } else if(option == 8){
+    	//DECREMENTA PRIORIDADE   	
+		printf( "Digite o PID do processo para incrementar: ");
+		scanf( "%d", &pid_vitima);
+
+		std::cout << "Valor: "; 
+      	std::cin >> value;
+
+		setpriority(PRIO_PROCESS, pid_vitima, value); 
+		system("clear");
+    } else{
+
+      	break;
     }
-
   } while(1);
+
+  // printf("fora");
+
+  //   int pid = fork();
+  //   if (pid == 0) {
+  //     while (1)
+  //     {
+  //     system("clear");
+  //     system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm --sort=-pcpu | head -n 20&");
+  //     sleep(1);
+  //     }
+  //   } else if (pid > 0) {
+  //       int status;
+  //       waitpid(pid, &status, 0);
+  //       printf("Child exited with %d\n", WEXITSTATUS(status));
+  //   }
+
+  // while (1) {
+  //   printf("> \n");
+  //   std::cin >> option;
+  //   printf("%d \n",option);
+  // }
 
   return 0;
 }
