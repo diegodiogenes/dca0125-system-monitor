@@ -18,7 +18,8 @@ void interface(int option, std::string filter = NULL){
   switch (option)
   {
   case 1:
-    system( (" ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | grep  '"+filter+"'").c_str() );
+    system("clear");
+    system( (" ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER | head -1; ps -ao pid,user,pri,nice,pcpu,pmem,time,comm -U $USER --sort=-pcpu | grep  '"+filter+"' --color=auto").c_str() );
     break;
   
   default:
@@ -48,7 +49,7 @@ void funcKill(int pid_vitima, int option_kill){
 /*
 TO-DO
 
-1- [ ] FILTRO
+1- [X] FILTRO
 2- [X] Pause/Continue/Mata processo 
 3- [ ] Muda Prioridade do processo
 4- [ ] Escolhe a CPU do processo
@@ -65,18 +66,21 @@ int main() {
   std::string filter;
 
   do{
-
     interface(option, filter);
-    std::cout << "1. " << "\033[30;46mfiltrar processo\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
+    std::cout << "1. " << "\033[30;46mProcurar\033[0m" << " 2. " << "\033[30;46mPausar Processo\033[0m" << " 3. " 
     << "\033[30;46mContinuar Processo\033[0m" << " 4. " << "\033[30;46mMudar prioridade\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
-    << " 6. " << "\033[30;46mKill\033[0m \n";
+    << " 6. " << "\033[30;46mKill\033[0m \n" << " 7. " << "\033[30;46mAlterar CPU\033[0m \n";
     std::cin >> option;
 
     if(option == 1){
+      system("clear");  
       interface(0, filter);
       std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
     << "\033[30;46m\033[0m";
       std::cin >> filter;
+      if(filter.compare("2") == 0){
+          option = 0;
+      }
       system("clear");
     }else if(option == 5){
       system("clear");
@@ -100,28 +104,6 @@ int main() {
       break;
     }
   } while(1);
-
-  // printf("fora");
-
-  //   int pid = fork();
-  //   if (pid == 0) {
-  //     while (1)
-  //     {
-  //     system("clear");
-  //     system("ps -ao pid,user,pri,nice,pcpu,pmem,time,comm --sort=-pcpu | head -n 20&");
-  //     sleep(1);
-  //     }
-  //   } else if (pid > 0) {
-  //       int status;
-  //       waitpid(pid, &status, 0);
-  //       printf("Child exited with %d\n", WEXITSTATUS(status));
-  //   }
-
-  // while (1) {
-  //   printf("> \n");
-  //   std::cin >> option;
-  //   printf("%d \n",option);
-  // }
 
   return 0;
 }
