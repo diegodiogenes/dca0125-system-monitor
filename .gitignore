@@ -13,6 +13,7 @@
 
 #vscode
 .idea/
+.vscode/
 
 # Compiled Dynamic libraries
 *.so
