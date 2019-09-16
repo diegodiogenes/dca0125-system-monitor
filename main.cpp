@@ -51,17 +51,20 @@ void funcKill(int pid_vitima, int option_kill){
     if(option_kill == 1){
      //MATAR PROCESSO
       kill(pid_vitima, SIGKILL);
-      printf("PROCESSO %d MORTO\n", pid_vitima);
+      std::cout << "\033[37;41mPROCESSO " << pid_vitima <<" MORTO\033[0m \n";
+      /*printf("PROCESSO %d MORTO\n", pid_vitima);*/
     } else if(option_kill == 2){
         //PAUSAR PROCESSO
         kill(pid_vitima, SIGSTOP);        
-        printf("PROCESSO %d PAUSADO\n", pid_vitima);
+        std::cout << "\033[37;41mPROCESSO " << pid_vitima <<" PAUSADO\033[0m \n";
+        /*printf("PROCESSO %d PAUSADO\n", pid_vitima);*/
     } else if(option_kill == 3){
         //CONTINUAR
         kill(pid_vitima, SIGCONT);
-        printf("PROCESSO %d CONTINUA\n", pid_vitima);
+        std::cout << "\033[37;41mPROCESSO " << pid_vitima <<" CONTINUA\033[0m \n";
+        /*printf("PROCESSO %d CONTINUA\n", pid_vitima);*/
     } else{
-        printf("Comando inválido\n");
+        std::cout << "\033[37;41m\t\t COMANDO INVÁLIDO \t\033[0m \n "; 
     }
 }
 
@@ -69,8 +72,8 @@ void funcKill(int pid_vitima, int option_kill){
 TO-DO
 1- [X] FILTRO
 2- [X] Pause/Continue/Mata processo 
-3- [ ] Muda Prioridade do processo
-4- [ ] Escolhe a CPU do processo
+3- [X] Muda Prioridade do processo
+4- [X] Escolhe a CPU do processo
 */
 
 int main() {
@@ -87,8 +90,8 @@ int main() {
 
   do{
     interface(option, filter);
-    std::cout << "1. " << "\033[30;46mProcurar\033[0m" << " 2. " << "\033[30;46mNice -\033[0m" << " 3. " 
-    << "\033[30;46mNice +\033[0m" << " 4. " << "\033[30;46mChange CPU\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
+    std::cout << "1. " << "\033[30;46mProcurar\033[0m" << " 2. " << "\033[30;46mPriority -\033[0m" << " 3. " 
+    << "\033[30;46mPriority +\033[0m" << " 4. " << "\033[30;46mChange CPU\033[0m" << " 5. " << "\033[30;46mAtualizar\033[0m"
     << " 6. " << "\033[30;46mKill\033[0m \n";
     std::cin >> option;
 
@@ -105,24 +108,30 @@ int main() {
             break;
         case 2:
             //DECREMENTA PRIORIDADE   	
-			printf( "Digite o PID do processo para decrementar(ROOT): ");
-			scanf( "%d", &pid_vitima);
+            std::cout << "\033[30;46mDigite o PID do processo para decrementar(ROOT): \033[0m";
+      			/*printf("Digite o PID do processo para decrementar(ROOT): ");*/
+      			scanf( "%d", &pid_vitima);
 
-			std::cout << "Valor: "; 
-	      	std::cin >> value;
+			      std::cout << "\033[30;46mValor: \033[0m";
+	      	  std::cin >> value;
 
-			setpriority(PRIO_PROCESS, pid_vitima, (-1)*value); 
-			system("clear");
+			      setpriority(PRIO_PROCESS, pid_vitima, (-1)*value); 
+            /*sleep(1);
+			      system("clear");*/
         case 3:
             //INCREMENTA PRIORIDADE   	
-			printf( "Digite o PID do processo para incrementar: ");
-			scanf( "%d", &pid_vitima);
+            std::cout << "\033[30;46mDigite o PID do processo para incrementar: \033[0m";
+      			/*printf( "Digite o PID do processo para incrementar: ");*/
+      			scanf( "%d", &pid_vitima);
 
-			std::cout << "Valor: "; 
-	      	std::cin >> value;
+      			/*std::cout << "Valor: "; */
+            std::cout << "\033[30;46mValor: \033[0m";
+	      	  std::cin >> value;
 
-			setpriority(PRIO_PROCESS, pid_vitima, value); 
-			system("clear");
+      			setpriority(PRIO_PROCESS, pid_vitima, value); 
+            /*sleep(1);
+      			system("clear");*/
+            break;
         case 4:
             cpu_set_t  mask;
             std::cout << "\033[30;46mPID do processo: \033[0m";
@@ -142,14 +151,21 @@ int main() {
             break;
         case 6:
             //TO-DO PARA AS DEMAIS MENSAGENS
-            std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";
+            std::cout << "\033[30;46mEscolha uma das MENSAGENS a ser enviada e para qual processo: \n\033[0m";
+            /*std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";*/
             std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
             std::cin >> option_kill;
 
-            printf("Digite o PID do processo que a mensagem deve ser enviada: ");
+            if((option_kill != 1) && (option_kill != 2) && (option_kill != 3)){
+                std::cout << "\033[37;41m\t\t COMANDO INVÁLIDO \t\033[0m \n "; 
+                break;  
+            }
+
+
+            std::cout << "\033[30;46mDigite o PID do processo que a mensagem deve ser enviada: \033[0m";
+            /*printf("Digite o PID do processo que a mensagem deve ser enviada: ");*/
             scanf( "%d", &pid_vitima);
 
-            //chamar função
             funcKill(pid_vitima, option_kill);     
             break;
         default:
