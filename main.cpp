@@ -72,37 +72,42 @@ int main() {
     << " 6. " << "\033[30;46mKill\033[0m \n" << " 7. " << "\033[30;46mAlterar CPU\033[0m \n";
     std::cin >> option;
 
-    if(option == 1){
-      system("clear");  
-      interface(0, filter);
-      std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
-    << "\033[30;46m\033[0m";
-      std::cin >> filter;
-      if(filter.compare("2") == 0){
-          option = 0;
-      }
-      system("clear");
-    }else if(option == 5){
-      system("clear");
+    switch(option){
+        case 1:
+            system("clear");  
+            interface(0, filter);
+            std::cout << "Enter " << "\033[30;46mProcurar\033[0m" << " 2." << "\033[30;46mSair\033[0m" << " Nome do processo: " 
+            << "\033[30;46m\033[0m";
+            std::cin >> filter;
+            if(filter.compare("2") == 0)
+                option = 0;
+            system("clear");
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            system("clear");
+            break;
+        case 6:
+            //TO-DO PARA AS DEMAIS MENSAGENS
+            std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";
+            std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
+            std::cin >> option_kill;
 
-      //KILL
-    } else if(option == 6){
+            printf( "Digite o PID do processo que a mensagem deve ser enviada: ");
+            scanf( "%d", &pid_vitima);
 
-      //TO-DO PARA AS DEMAIS MENSAGENS
-      std::cout << "Escolha uma das MENSAGENS a ser enviada e para qual processo: \n";
-      std::cout << "(1) SIGKILL      (2) SIGSTOP      (3) SIGCONT\n"; 
-      std::cin >> option_kill;
-
-      printf( "Digite o PID do processo que a mensagem deve ser enviada: ");
-      scanf( "%d", &pid_vitima);
-
-      //chamar função
-      funcKill(pid_vitima, option_kill);     
-
-    } else{
-
-      break;
+            //chamar função
+            funcKill(pid_vitima, option_kill);     
+            break;
+        default:
+            break;                            
     }
+
   } while(1);
 
   return 0;
